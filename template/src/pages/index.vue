@@ -27,7 +27,7 @@
 <script>
 // import { userInfoApi } from '@/services/user'
 import { userPermissionApi } from '@/services/UserPermission'
-import { DashboardApi } from '@/services/Dashboard'
+
 export default {
   name: 'home',
   data () {
@@ -108,35 +108,7 @@ export default {
         }
       })
     },
-    // 获取项目列表
-    getProjectList () {
-      DashboardApi.getProjectList({
-        params: this.projectListParam
-      }).then(res => {
-        console.log(res, 'get project list')
-        if (res.code === 0) {
-          this.projectList = res.data
-          if (this.projectList.list.length > 0) {
-            this.projectList.list.map((item) => {
-              this.$set(item, 'checked', false)
-            })
-            this.$store.dispatch('setProjectList', this.projectList)
-            this.$store.dispatch('setProject', this.projectList.list[0])
-          } else {
-            this.$store.dispatch('setProjectList', [])
-            this.$store.dispatch('setProject', {})
-          }
-        }
-      })
-      // this.projectList = {
-      //   data: [
-      //     { id: 1, project_name: '北大桥', address: '北大桥123', company_name: '建工' },
-      //     { id: 2, project_name: '大江东', address: '大江东123', company_name: '建委' }
-      //   ],
-      //   total: 2,
-      //   total_count: 2
-      // }
-    },
+   
     // 存入用户数据
     autoLogin (info) {
       window.sessionStorage.setItem(
@@ -160,8 +132,8 @@ export default {
         this.autoLogin(obj.data)
       }
     }
-    this.getMenuTree()
-    this.getProjectList()
+    // this.getMenuTree()
+
   }
 }
 </script>
