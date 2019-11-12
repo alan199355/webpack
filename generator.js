@@ -31,8 +31,13 @@ module.exports = (api, options, rootOptions) => {
   //   });
   // }
 
-  api.render('../template')
-
+  api.render('./template')
+  api.render({
+    './src/router/index.js': './template/src/router/index.js'
+  })
+  api.render({
+    './package.json': './template/package.json'
+  })
   // // 公共基础目录和文件
   // api.render('./template/default');
 

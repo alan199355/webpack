@@ -83,7 +83,7 @@ export default {
         this.$store.dispatch('sideNav', roleInfo.nav[first])
         window.localStorage.setItem('platFormSideNav', JSON.stringify(roleInfo.nav[first]))
       }
-    },  
+    },
     login () {
       userPermissionApi.login({
         data: {
@@ -108,7 +108,7 @@ export default {
         }
       })
     },
-   
+
     // 存入用户数据
     autoLogin (info) {
       window.sessionStorage.setItem(
@@ -133,7 +133,6 @@ export default {
       }
     }
     // this.getMenuTree()
-
   }
 }
 </script>
