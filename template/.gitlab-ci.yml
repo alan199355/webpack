@@ -1,0 +1,41 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  root_dir: /home/gitlab-runner/front/
+  PROJECT_NAME: balance-front
+
+  
+开发环境:
+  script:
+   - cd ${root_dir}/dev
+   - if [ -d ${root_dir}/dev/${PROJECT_NAME} ];then
+   - cd ${PROJECT_NAME}
+   - git pull
+   - else
+   - git clone -b dev git@gitlab.hzdingmao.com:industry/balancegroup/${PROJECT_NAME}.git
+   - cd ${PROJECT_NAME}
+   - fi
+   - cd  deploy
+   - sudo sh dev.sh
+  only:
+    - dev
+  when: manual
+  tags:
+   - publish
+    
+测试环境:
+  script:
+   - cd ${root_dir}/test
+   - if [ -d ${root_dir}/test/${PROJECT_NAME} ];then
+   - cd ${PROJECT_NAME}
+   - git pull
+   - else
+   - git clone -b test git@gitlab.hzdingmao.com:industry/balancegroup/${PROJECT_NAME}.git
+   - cd ${PROJECT_NAME}
+   - fi
+   - cd deploy
+   - sudo sh test.sh
+  only:
+    - test
+  when: manual
+  tags:
+   - publish
