@@ -1,27 +1,22 @@
 <template>
-  <div class='active-tabs-container'>
-    <p>
-      <span @click="back"
-            class="back">返回</span>
-      <i>/</i>
-      <span class="parent">{{routeMeta.parName}}</span>
-      <i>/</i>
-      <span class="now">{{routeMeta.name}}</span>
-    </p>
+  <div :style="tabStyle"
+       class='active-tabs-container'>
     <!-- <el-tag :type="activeTab==homePage.route_url?'success':''"
             class="active-tabs"
             @click="toggleTabs(homePage)">
       {{homePage.menu_name}}
-    </el-tag>
-
+    </el-tag> -->
+    <!-- <i @click="slideLeft"
+       class="icon-left fa fa-chevron-left"></i> -->
     <el-tag :type="item.route_url.indexOf(activeTab)>=0?'success':''"
             closable
             class="active-tabs"
             @click="toggleTabs(item)"
             @close="closeTabs(item)"
-            v-for="(item, index) in activeTabsList"
-            :key="index">{{item.menu_name}}</el-tag> -->
-
+            v-for="(item) in tabList"
+            :key="item.menu_id">{{item.menu_name}}</el-tag>
+    <!-- <i @click="slideRight"
+       class="icon-right fa fa-chevron-right"></i> -->
   </div>
 </template>
 <script>
@@ -39,13 +34,12 @@ export default {
       tabStyle: {},
       // 标签栏的偏移量，以实现左右滑动
       offset: 0,
-      // 当前路由名及上级页面名称
-      routeMeta: {}
+      tabList: []
     }
   },
   computed: {
     activeTabsList () {
-      let store = this.$store.state.activeTabsList
+      let store = this.$store.getters.getActiveTabList
       let local = JSON.parse(window.localStorage.getItem('platFormActiveTabsList')) || []
       let tabsList = []
       if (store.length === 0) {
@@ -90,8 +84,8 @@ export default {
       deep: true
     },
     activeTabsList: {
-      handler (newval, oldval) {
-        console.log(newval, 'watch')
+      handler (newval) {
+        this.tabList = newval
       },
       deep: true
     }
@@ -132,30 +126,57 @@ export default {
       if (store.length === 1) {
         this.$router.push({ path: '/home' })
       } else {
+        store.map((tabItem, index) => {
+          if (tabItem.route_url === item.route_url) closeTabIndex = index
+        })
         if (activeTab === item.route_url) {
-          store.map((tabItem, index) => {
-            if (tabItem.route_url === item.route_url) closeTabIndex = index
-          })
           // 关闭当前页面后将要显示的页面的index
           // 如果当前页面index为0，说明为第一个，取第二个路由
           // 否则取左侧的路由
           let showTabIndex = closeTabIndex - 1 >= 0 ? closeTabIndex - 1 : closeTabIndex
           this.$router.push({ path: '/' + store[showTabIndex].route_url })
           // console.log(store, showTabIndex, closeTabIndex, 'remove')
+        } else {
+
         }
       }
-      // this.activeTabsList.splice(closeTabIndex, 1)
+      // this.$nextTick(() => {
+      //   this.activeTabsList.splice(closeTabIndex, 1)
+      // })
       // this.$store.dispatch('resetActiveTabsList', this.activeTabsList)
-      console.log(item, 'remove item')
-      this.$store.dispatch('removeActiveTabs', item)
+      // this.tabList.splice(closeTabIndex, 1)
+      this.$store.dispatch('removeActiveTabs', closeTabIndex)
+      console.log(item, this.$store.getters.getActiveTabList, 'remove item')
     },
-    back () {
-      this.$router.go(-1)
+    // 向左滑动
+    slideLeft () {
+
+    },
+    // 向右滑动
+    slideRight () {
+      this.offset += 92
+      this.tabStyle = {
+        marginLeft: '-' + this.offset + 'px'
+      }
+    },
+    getActiveTabList () {
+      let store = this.$store.getters.getActiveTabList
+      let local = JSON.parse(window.localStorage.getItem('platFormActiveTabsList')) || []
+      let tabsList = []
+      if (store.length === 0) {
+        if (local.length !== 0) {
+          tabsList = local
+          this.$store.dispatch('resetActiveTabsList', local)
+        }
+      } else {
+        tabsList = store
+      }
+      this.tabList = tabsList
+      console.log(tabsList, 'get active tab list')
     }
   },
   created () {
-    console.log(this.$route, 'route')
-    this.routeMeta = this.$route.meta
+    this.getActiveTabList()
   },
   mouted () {
 
@@ -167,25 +188,11 @@ export default {
   padding: 0;
   display: flex;
   height: 40px;
-  // background-color: #fff;
+  background-color: #fff;
   z-index: 200;
-  transition: position ease 2s;
+  // transition: position ease 2s;
   position: relative;
-  i {
-    font-style: normal;
-  }
-  p {
-    line-height: 40px;
-    padding-left: 20px;
-    font-size: 14px;
-    color: #999;
-    .back {
-      cursor: pointer;
-    }
-    .now {
-      color: #333;
-    }
-  }
+  display: block;
   > .fa {
     position: absolute;
     width: 40px;
